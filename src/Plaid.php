@@ -85,7 +85,7 @@ class Plaid
 	 * @param string $environment
 	 * @param string $version
 	 */
-	public function __construct(string $client_id, string $secret, string $public_key, string $environment = "production", string $version = "2019-05-29")
+	public function __construct(string $client_id, string $secret, string $public_key = null, string $environment = "production", string $version = "2019-05-29")
 	{
 		$this->client_id = $client_id;
 		$this->secret = $secret;
@@ -334,6 +334,58 @@ class Plaid
 
 		return $this->doRequest(
 			$this->buildRequest("post", "item/remove", $this->clientCredentials($params))
+		);
+	}
+
+	/**
+	 * Create a new Link token.
+	 *
+	 * @param string $client_name
+	 * @param string $client_user_id
+	 * @param string $language
+	 * @param array $country_codes
+	 * @param array $products
+	 * @param string|null $redirect_uri
+	 * @param string|null $link_customization_name
+	 * @param string|null $webhook
+	 * @param string $access_token
+	 * @param array $account_filters
+	 * @param string|null $android_package_name
+	 * @param array $payment_initiation
+	 * @return object
+	 * @throws PlaidRequestException
+	 */
+	public function createLinkToken(
+		string $client_name,
+		string $client_user_id,
+		string $language = 'en',
+		array $country_codes = ['US'],
+		array $products = [],
+		string $redirect_uri = null,
+		string $link_customization_name = null,
+		string $webhook = null,
+		string $access_token = null,
+		array $account_filters = [],
+		string $android_package_name = null,
+		array $payment_initiation = []): object
+	{
+		$params = [
+			"client_name" => $client_name,
+			"user" => (object) ["client_user_id" => $client_user_id],
+			"language" => $language,
+			"country_codes" => $country_codes,
+			"products" => $products,
+			"redirect_uri" => $redirect_uri,
+			"link_customization_name" => $link_customization_name,
+			"webhook" => $webhook,
+			"access_token" => $access_token,
+			"account_filters" => (object) $account_filters,
+			"android_package_name" => $android_package_name,
+			"payment_initiation" => (object) $payment_initiation,
+		];
+
+		return $this->doRequest(
+			$this->buildRequest("post", "link/token/create", $this->clientCredentials($params))
 		);
 	}
 
